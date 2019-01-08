@@ -22,14 +22,31 @@ public class LocalDataSource implements DataSource<List<AlbumEntity>> {
     public LiveData<List<AlbumEntity>> getDataStream() {
         return mDb.albumDao().getAllAlbumsLive();
     }
+
+    @Override
+    public LiveData<AlbumEntity> getDetail(int id) {
+        return mDb.albumDao().getAlbum(id);
+    }
+
     @Override
     public LiveData<String> getErrorStream() {
         return mError;
     }
 
-    public void writeData(List<AlbumEntity> coins) {
+    public void writeData(List<AlbumEntity> albums) {
         try {
-            mDb.albumDao().insertAlbums(coins);
+            mDb.albumDao().insertAlbums(albums);
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            mError.postValue(e.getMessage());
+        }
+    }
+
+
+    public void writeDetailData(AlbumEntity album) {
+        try {
+            mDb.albumDao().insertAlbum(album);
         }catch(Exception e)
         {
             e.printStackTrace();

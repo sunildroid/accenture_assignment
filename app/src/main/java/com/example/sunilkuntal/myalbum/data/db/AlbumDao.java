@@ -17,6 +17,9 @@ public interface AlbumDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAlbums(List<AlbumEntity> albums);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAlbum(AlbumEntity album);
+
     @Query("SELECT * FROM albums")
     LiveData<List<AlbumEntity>> getAllAlbumsLive();
 
@@ -27,7 +30,7 @@ public interface AlbumDao {
     LiveData<List<AlbumEntity>> getAlbums(int limit);
 
     @Query("SELECT * FROM albums WHERE id=:id")
-    LiveData<AlbumEntity> getAlbum(String id);
+    LiveData<AlbumEntity> getAlbum(int id);
 
     @VisibleForTesting
     @Query("DELETE FROM albums")

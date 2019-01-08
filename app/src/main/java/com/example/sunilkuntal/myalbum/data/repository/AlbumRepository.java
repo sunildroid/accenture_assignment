@@ -13,4 +13,7 @@ public interface AlbumRepository {
     LiveData<List<AlbumEntity>> getAlbumsData();
     LiveData<String> getErrorStream();
     void fetchData();
+
+    LiveData<AlbumEntity> getAlbumsDetails();
+    void fetchDetail(int id);
     }

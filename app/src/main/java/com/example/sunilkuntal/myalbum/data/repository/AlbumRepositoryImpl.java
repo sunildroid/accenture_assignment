@@ -24,12 +24,46 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     private ExecutorService mExecutor = Executors.newFixedThreadPool(5);
     private final RemoteDataSource mRemoteDataSource;
     private final LocalDataSource mLocalDataSource;
+     static int selectedID;
     MediatorLiveData<List<AlbumEntity>> mDataMerger = new MediatorLiveData<>();
+
+    MediatorLiveData<AlbumEntity> mDatamergerDetails = new MediatorLiveData<AlbumEntity>();
+
     MediatorLiveData<String> mErrorMerger = new MediatorLiveData<>();
 
     private AlbumRepositoryImpl(RemoteDataSource mRemoteDataSource,final LocalDataSource mLocalDataSource) {
         this.mRemoteDataSource = mRemoteDataSource;
         this.mLocalDataSource = mLocalDataSource;
+
+        mDatamergerDetails.addSource(this.mRemoteDataSource.getDetail(selectedID), new Observer<AlbumEntity>() {
+            @Override
+            public void onChanged(@Nullable final AlbumEntity albumDetail) {
+                mExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "mDataMerger\tmRemoteDataSource onChange invoked");
+                        mLocalDataSource.writeDetailData(albumDetail);
+                        mDatamergerDetails.postValue(albumDetail);
+
+
+                    }
+                });
+            }
+        });
+
+        mDatamergerDetails.addSource(this.mLocalDataSource.getDetail(selectedID), new Observer<AlbumEntity>() {
+            @Override
+            public void onChanged(@Nullable final AlbumEntity albumEntities) {
+                mExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "mDataMerger\tmLocalDataSource onChange invoked");
+                        mDatamergerDetails.postValue(albumEntities);
+                    }
+                });
+            }
+        });
+
 
         mDataMerger.addSource(this.mRemoteDataSource.getDataStream(), new Observer<List<AlbumEntity>>() {
             @Override
@@ -39,7 +73,6 @@ public class AlbumRepositoryImpl implements AlbumRepository {
                     public void run() {
                         Log.d(TAG, "mDataMerger\tmRemoteDataSource onChange invoked");
                         mLocalDataSource.writeData(albumEntities);
-                        // List<CoinModel> list = mMapper.mapEntityToModel(entities);
                         mDataMerger.postValue(albumEntities);
 
 
@@ -90,6 +123,16 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         return new AlbumRepositoryImpl(remoteDataSource, localDataSource);
     }
 
+    public static AlbumRepository create(Context mAppContext,int id) {
+        AlbumRepositoryImpl.selectedID=id;
+        final RemoteDataSource remoteDataSource = new RemoteDataSource(mAppContext);
+        final LocalDataSource localDataSource = new LocalDataSource(mAppContext);
+        return new AlbumRepositoryImpl(remoteDataSource, localDataSource);
+    }
+
+
+
+
     @VisibleForTesting
     public static AlbumRepositoryImpl createImpl(Context mAppContext) {
         final RemoteDataSource remoteDataSource = new RemoteDataSource(mAppContext);
@@ -100,6 +143,16 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     @Override
     public void fetchData() {
         mRemoteDataSource.fetchAlbumList();
+    }
+
+    @Override
+    public LiveData<AlbumEntity> getAlbumsDetails() {
+        return  mDatamergerDetails;
+    }
+
+    @Override
+    public void fetchDetail(int id) {
+        mRemoteDataSource.fetchAlbumDetail(id);
     }
 
     @Override

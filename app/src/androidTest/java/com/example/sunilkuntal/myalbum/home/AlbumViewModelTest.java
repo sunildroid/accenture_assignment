@@ -9,7 +9,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.example.sunilkuntal.myalbum.R;
 import com.example.sunilkuntal.myalbum.data.entities.AlbumEntity;
 import com.example.sunilkuntal.myalbum.data.repository.AlbumRepositoryImpl;
-import com.example.sunilkuntal.myalbum.ui.home.AlbumViewModel;
+import com.example.sunilkuntal.myalbum.ui.feature.home.AlbumViewModel;
 
 import org.junit.Before;
 import org.junit.Test;

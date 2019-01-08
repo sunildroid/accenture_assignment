@@ -1,4 +1,4 @@
-package com.example.sunilkuntal.myalbum.ui.home;
+package com.example.sunilkuntal.myalbum.ui.feature.home;
 
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +11,6 @@ import com.example.sunilkuntal.myalbum.R;
 import com.example.sunilkuntal.myalbum.data.entities.AlbumEntity;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,8 +22,11 @@ public class MyAlbumAdapter extends RecyclerView.Adapter<MyAlbumAdapter.AlbumVie
     public final String STR_TEMPLATE_ID = "ID:\t %s";
     public final String STR_TEMPLATE_USER_ID = "User ID:\t\t%s";
     public final String STR_TEMPLATE_TITLE = "Title:\t\t%s";
-    private final Handler mHandler = new Handler();
+    private ListItemClickable mListItemClickable;
 
+    public MyAlbumAdapter(ListItemClickable mListItemClickable) {
+        this.mListItemClickable = mListItemClickable;
+    }
 
     @Override
     public void onBindViewHolder(AlbumViewHolder holder, int position) {
@@ -55,7 +57,7 @@ public class MyAlbumAdapter extends RecyclerView.Adapter<MyAlbumAdapter.AlbumVie
     }
 
 
-    class AlbumViewHolder extends RecyclerView.ViewHolder {
+    class AlbumViewHolder extends RecyclerView.ViewHolder implements  View.OnClickListener {
 
         TextView tvUserID;
         TextView tvID;
@@ -66,6 +68,12 @@ public class MyAlbumAdapter extends RecyclerView.Adapter<MyAlbumAdapter.AlbumVie
             tvUserID = itemView.findViewById(R.id.tvUserID);
             tvID = itemView.findViewById(R.id.tvID);
             tvTitle = itemView.findViewById(R.id.tvTitle);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+          mListItemClickable.handleListItemClick(mItems.get(getAdapterPosition()).getId());
         }
     }
 }

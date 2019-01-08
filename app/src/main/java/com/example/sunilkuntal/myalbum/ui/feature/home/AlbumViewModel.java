@@ -1,4 +1,4 @@
-package com.example.sunilkuntal.myalbum.ui.home;
+package com.example.sunilkuntal.myalbum.ui.feature.home;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;

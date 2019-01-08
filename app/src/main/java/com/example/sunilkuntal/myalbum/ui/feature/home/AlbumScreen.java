@@ -1,4 +1,4 @@
-package com.example.sunilkuntal.myalbum.ui.home;
+package com.example.sunilkuntal.myalbum.ui.feature.home;
 
 
 import com.example.sunilkuntal.myalbum.data.entities.AlbumEntity;
